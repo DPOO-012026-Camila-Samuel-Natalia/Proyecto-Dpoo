@@ -1,11 +1,12 @@
 package persistencia;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import modelo.*;
 
-// Esta clase guarda y carga el sistema en archivo de texto
+// esta clase guarda y carga el sistema en archivo de texto
 public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
 {
     private String ruta;
@@ -15,9 +16,6 @@ public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
         this.ruta = ruta;
     }
 
-    // =========================
-    // GUARDAR
-    // =========================
     @Override
     public void guardar(BoardgameCafe cafe)
     {
@@ -25,17 +23,14 @@ public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
         {
             PrintWriter out = new PrintWriter(new FileWriter(ruta));
 
-            // Capacidad
             out.println("CAPACIDAD;" + cafe.getCapacidadMaxima());
 
-            // ADMIN
             Administrador a = cafe.getAdministrador();
             if (a != null)
             {
                 out.println("ADMIN;" + a.getId() + ";" + a.getNombre() + ";" + a.getLogin() + ";" + a.getPassword());
             }
 
-            // CLIENTES
             Collection<Cliente> clientes = cafe.getClientes();
             for (Cliente c : clientes)
             {
@@ -52,10 +47,9 @@ public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
                 }
 
                 out.println("CLIENTE;" + c.getId() + ";" + c.getNombre() + ";" + c.getLogin() + ";" + c.getPassword()
-                        + ";" + c.getPuntosFidelidad() + ";" + mesa + ";" + codigo);
+                        + ";" + c.getPuntosFidelidad() + ";" + mesa + ";" + codigo + ";" + c.getBonoTorneo());
             }
 
-            // EMPLEADOS
             Collection<Empleado> empleados = cafe.getEmpleados();
             for (Empleado e : empleados)
             {
@@ -68,7 +62,6 @@ public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
                 out.println("EMPLEADO;" + tipo + ";" + e.getId() + ";" + e.getNombre() + ";" + e.getLogin() + ";"
                         + e.getPassword() + ";" + e.isEnTurno());
 
-                // Juegos que explica el mesero
                 if (e instanceof Mesero)
                 {
                     Mesero m = (Mesero) e;
@@ -79,14 +72,12 @@ public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
                 }
             }
 
-            // MESAS
             for (Mesa m : cafe.getMesas())
             {
                 out.println("MESA;" + m.getNumero() + ";" + m.getCapacidad() + ";" + m.getNumPersonas() + ";"
                         + m.isNinos() + ";" + m.hayMenoresDeEdad());
             }
 
-            // JUEGOS
             for (JuegoDeMesa j : cafe.getCatalogoJuegos())
             {
                 out.println("JUEGO;" + j.getNombre() + ";" + j.getMinJugadores() + ";" + j.getMaxJugadores() + ";"
@@ -95,7 +86,14 @@ public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
                         + ";" + j.getCopiasEnUso());
             }
 
-            // PRODUCTOS
+            for (Cliente c : clientes)
+            {
+                for (JuegoDeMesa j : c.getJuegosFavoritos())
+                {
+                    out.println("FAVORITO;" + c.getLogin() + ";" + j.getNombre());
+                }
+            }
+
             for (ProductoMenu p : cafe.getProductosMenu())
             {
                 if (p instanceof Bebida)
@@ -111,7 +109,6 @@ public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
                 }
             }
 
-            // TURNOS
             for (Turno t : cafe.getTurnos())
             {
                 out.println("TURNO;" + t.getDiaSemana());
@@ -119,6 +116,19 @@ public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
                 for (Empleado e : t.getEmpleados())
                 {
                     out.println("TURNO_EMPLEADO;" + t.getDiaSemana() + ";" + e.getLogin());
+                }
+            }
+
+            for (Torneo t : cafe.getTorneos())
+            {
+                out.println("TORNEO;" + t.getCodigo() + ";" + t.getDiaSemana() + ";" + t.getJuego().getNombre()
+                        + ";" + t.getMaxParticipantes() + ";" + t.getTipo() + ";" + t.getTarifaEntrada()
+                        + ";" + t.getBonoDescuento());
+
+                for (InscripcionTorneo i : t.getInscripciones())
+                {
+                    out.println("INSCRIPCION_TORNEO;" + t.getCodigo() + ";" + i.getUsuario().getLogin()
+                            + ";" + i.getCuposTomados());
                 }
             }
 
@@ -130,45 +140,43 @@ public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
         }
     }
 
-    // =========================
-    // CARGAR
-    // =========================
     @Override
     public BoardgameCafe cargar()
     {
         BoardgameCafe cafe = null;
+        ArrayList<String> lineas = new ArrayList<String>();
 
         try
         {
             BufferedReader br = new BufferedReader(new FileReader(ruta));
             String linea = br.readLine();
 
-            // Buscar capacidad sin usar break
             while (linea != null)
             {
-                String[] p = linea.split(";");
+                lineas.add(linea);
+                linea = br.readLine();
+            }
+
+            br.close();
+
+            for (String l : lineas)
+            {
+                String[] p = l.split(";");
 
                 if (p[0].equals("CAPACIDAD") && cafe == null)
                 {
                     cafe = new BoardgameCafe(Integer.parseInt(p[1]));
                 }
-
-                linea = br.readLine();
             }
-
-            br.close();
 
             if (cafe == null)
             {
                 return null;
             }
 
-            br = new BufferedReader(new FileReader(ruta));
-            linea = br.readLine();
-
-            while (linea != null)
+            for (String l : lineas)
             {
-                String[] p = linea.split(";");
+                String[] p = l.split(";");
 
                 if (p[0].equals("ADMIN"))
                 {
@@ -178,6 +186,17 @@ public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
                 {
                     Cliente c = new Cliente(p[1], p[2], p[3], p[4]);
                     c.agregarPuntos(Integer.parseInt(p[5]));
+
+                    if (!p[7].equals("null"))
+                    {
+                        c.setCodigoDescuento(p[7]);
+                    }
+
+                    if (p.length > 8)
+                    {
+                        c.guardarBonoTorneo(Double.parseDouble(p[8]));
+                    }
+
                     cafe.agregarCliente(c);
                 }
                 else if (p[0].equals("EMPLEADO"))
@@ -206,41 +225,106 @@ public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
 
                     if (Integer.parseInt(p[3]) > 0)
                     {
-                        m.ocupar(Integer.parseInt(p[3]),
-                                Boolean.parseBoolean(p[4]),
-                                Boolean.parseBoolean(p[5]));
+                        m.ocupar(Integer.parseInt(p[3]), Boolean.parseBoolean(p[4]), Boolean.parseBoolean(p[5]));
                     }
 
                     cafe.agregarMesa(m);
                 }
                 else if (p[0].equals("JUEGO"))
                 {
-                    JuegoDeMesa j = new JuegoDeMesa(
-                            p[1],
-                            0,
-                            "NA",
-                            Integer.parseInt(p[2]),
-                            Integer.parseInt(p[3]),
-                            Integer.parseInt(p[4]),
-                            p[5],
-                            Boolean.parseBoolean(p[6]),
-                            Integer.parseInt(p[7]),
-                            Integer.parseInt(p[8]),
-                            Double.parseDouble(p[9])
-                    );
+                    JuegoDeMesa j = new JuegoDeMesa(p[1], 0, "NA", Integer.parseInt(p[2]),
+                            Integer.parseInt(p[3]), Integer.parseInt(p[4]), p[5],
+                            Boolean.parseBoolean(p[6]), Integer.parseInt(p[7]),
+                            Integer.parseInt(p[8]), Double.parseDouble(p[9]));
 
                     j.setCopiasEnUso(Integer.parseInt(p[10]));
                     cafe.agregarJuego(j);
+                }
+                else if (p[0].equals("BEBIDA"))
+                {
+                    Bebida b = new Bebida(p[1], Double.parseDouble(p[2]),
+                            Boolean.parseBoolean(p[3]), Boolean.parseBoolean(p[4]));
+
+                    cafe.agregarProductoMenu(b);
+                }
+                else if (p[0].equals("PASTELERIA"))
+                {
+                    Pasteleria pa = new Pasteleria(p[1], Double.parseDouble(p[2]));
+                    cafe.agregarProductoMenu(pa);
                 }
                 else if (p[0].equals("TURNO"))
                 {
                     cafe.agregarTurno(new Turno(p[1]));
                 }
-
-                linea = br.readLine();
             }
 
-            br.close();
+            for (String l : lineas)
+            {
+                String[] p = l.split(";");
+
+                if (p[0].equals("EXPLICA"))
+                {
+                    Empleado e = cafe.buscarEmpleado(p[1]);
+
+                    if (e instanceof Mesero)
+                    {
+                        Mesero m = (Mesero) e;
+                        m.agregarJuegoQueExplica(p[2]);
+                    }
+                }
+                else if (p[0].equals("TURNO_EMPLEADO"))
+                {
+                    Turno turno = buscarTurno(cafe, p[1]);
+                    Empleado empleado = cafe.buscarEmpleado(p[2]);
+
+                    if (turno != null && empleado != null)
+                    {
+                        cafe.asignarTurno(empleado, turno);
+                    }
+                }
+                else if (p[0].equals("FAVORITO"))
+                {
+                    Cliente c = cafe.buscarCliente(p[1]);
+                    JuegoDeMesa j = cafe.buscarJuego(p[2]);
+
+                    if (c != null && j != null)
+                    {
+                        c.agregarJuegoFavorito(j);
+                    }
+                }
+                else if (p[0].equals("TORNEO"))
+                {
+                    JuegoDeMesa juego = cafe.buscarJuego(p[3]);
+                    TipoTorneo tipo = TipoTorneo.valueOf(p[5]);
+
+                    Torneo torneo = new Torneo(p[1], p[2], juego, Integer.parseInt(p[4]),
+                            tipo, Double.parseDouble(p[6]), Double.parseDouble(p[7]));
+
+                    cafe.agregarTorneo(torneo);
+                }
+            }
+
+            for (String l : lineas)
+            {
+                String[] p = l.split(";");
+
+                if (p[0].equals("INSCRIPCION_TORNEO"))
+                {
+                    Torneo torneo = cafe.buscarTorneo(p[1]);
+                    Cliente cliente = cafe.buscarCliente(p[2]);
+                    Empleado empleado = cafe.buscarEmpleado(p[2]);
+                    int cupos = Integer.parseInt(p[3]);
+
+                    if (torneo != null && cliente != null)
+                    {
+                        torneo.inscribir(cliente, cupos, cliente.esFanaticoDe(torneo.getJuego()));
+                    }
+                    else if (torneo != null && empleado != null)
+                    {
+                        torneo.inscribir(empleado, cupos, false);
+                    }
+                }
+            }
         }
         catch (IOException e)
         {
@@ -248,5 +332,21 @@ public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
         }
 
         return cafe;
+    }
+
+    // busca un turno por dia
+    private Turno buscarTurno(BoardgameCafe cafe, String diaSemana)
+    {
+        Turno encontrado = null;
+
+        for (Turno t : cafe.getTurnos())
+        {
+            if (t.getDiaSemana().equals(diaSemana))
+            {
+                encontrado = t;
+            }
+        }
+
+        return encontrado;
     }
 }

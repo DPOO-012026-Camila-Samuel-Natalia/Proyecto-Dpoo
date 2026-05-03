@@ -23,6 +23,8 @@ import modelo.PuedePrestar;
 import modelo.Usuario;
 import modelo.Turno;
 import modelo.ProductoMenu;
+import modelo.Torneo;
+import modelo.TipoTorneo;
 
 import persistencia.CentralPersistencia;
 import persistencia.PersistenciaBoardGameCafeJSON;
@@ -531,6 +533,62 @@ public class Principal
 
 		System.out.println("\n-- Estado final del sistema --");
 		System.out.println(cafe);
+		
+		// =========================
+		// FASE 6: TORNEOS
+		// =========================
+		
+		System.out.println("\n ===== FASE 6: TORNEOS ===== ");
+
+		Torneo torneoAmistoso = null;
+
+		try {
+		    torneoAmistoso = admin.crearTorneo(cafe, "VIERNES", j1, 6, TipoTorneo.AMISTOSO, 0, 5000);
+
+		    c1.agregarJuegoFavorito(j1);
+
+		    c1.inscribirseATorneo(cafe, torneoAmistoso, 2);
+
+		    System.out.println("Torneo amistoso creado: " + torneoAmistoso);
+		    System.out.println("Samuel inscrito como fanatico");
+		    System.out.println("Cupos ocupados: " + torneoAmistoso.getCuposOcupados());
+		    System.out.println("Cupos fanaticos: " + torneoAmistoso.getCuposFanaticos());
+
+		    cafe.entregarPremioAmistoso(torneoAmistoso, c1);
+		    System.out.println("Bono ganado por Samuel: $" + c1.getBonoTorneo());
+
+		    VentaJuego ventaConBono = cafe.registrarVentaJuego(c1, j1, 1);
+		    System.out.println("Venta con bono aplicada: " + ventaConBono);
+		    System.out.println("Descuento aplicado por bono: $" + ventaConBono.getDescuento());
+		    System.out.println("Bono restante Samuel: $" + c1.getBonoTorneo());
+
+		} catch (IllegalStateException e) {
+		    System.out.println("Error: " + e.getMessage());
+		}
+
+		try {
+		    Torneo torneoCompetitivo = admin.crearTorneo(cafe, "MARTES", j2, 10, TipoTorneo.COMPETITIVO, 10000, 0);
+
+		    admin.inscribirEmpleadoATorneo(cafe, m4, torneoCompetitivo, 1);
+		    cafe.inscribirClienteTorneo(c2, torneoCompetitivo, 3);
+
+		    System.out.println("Torneo competitivo creado: " + torneoCompetitivo);
+		    System.out.println("Recaudado: $" + torneoCompetitivo.getRecaudado());
+		    System.out.println("Premio metalico: $" + torneoCompetitivo.getPremioMetalico());
+
+		} catch (IllegalStateException e) {
+		    System.out.println("Error: " + e.getMessage());
+		}
+
+		try {
+		    Torneo torneoError = admin.crearTorneo(cafe, "LUNES", j2, 6, TipoTorneo.COMPETITIVO, 8000, 0);
+
+		    admin.inscribirEmpleadoATorneo(cafe, m2, torneoError, 1);
+		    System.out.println("Debio haber fallado");
+
+		} catch (IllegalStateException e) {
+		    System.out.println("Error esperado empleado con turno: " + e.getMessage());
+		}
 		
 		// =========================
 		// PERSISTENCIA

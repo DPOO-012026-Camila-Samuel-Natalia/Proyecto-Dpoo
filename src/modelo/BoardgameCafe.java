@@ -13,7 +13,6 @@ public class BoardgameCafe
 	private HashMap<String, Empleado> empleados;
 	private ArrayList<Mesa> mesas;
 	private ArrayList<JuegoDeMesa> juegos;
-	//private ArrayList<CopiaJuego> copias;
 	private ArrayList<Prestamo> historialPrestamos;
 	private ArrayList<ProductoMenu> productosMenu;
 	private ArrayList<VentaCafe> ventasCafe;
@@ -23,8 +22,10 @@ public class BoardgameCafe
 	private int capacidadMaxima;
 	private int clientesActuales;
 	private ArrayList<Turno> turnos;
-
 	
+	// lista de torneos del cafe
+	private ArrayList<Torneo> torneos;
+
 	public BoardgameCafe(int capacidadMaxima)
 	{
 		this.capacidadMaxima = capacidadMaxima;
@@ -34,7 +35,6 @@ public class BoardgameCafe
 		empleados = new HashMap<String, Empleado>();
 		mesas = new ArrayList<Mesa>();
 		juegos = new ArrayList<JuegoDeMesa>();
-		//copias = new ArrayList<CopiaJuego>();
 		historialPrestamos = new ArrayList<Prestamo>();
 		productosMenu = new ArrayList<ProductoMenu>();
 		ventasCafe = new ArrayList<VentaCafe>();
@@ -42,13 +42,9 @@ public class BoardgameCafe
 		solicitudesCambioTurno = new ArrayList<SolicitudCambioTurno>();
 		sugerenciasPlatillos = new ArrayList<SugerenciaPlatillo>();
 		turnos = new ArrayList<Turno>();
+		torneos = new ArrayList<Torneo>();
 	}
 
-
-	// GETTERS
-
-	
-	
 	public Administrador getAdministrador()
 	{
 		return administrador;
@@ -58,18 +54,16 @@ public class BoardgameCafe
 		return capacidadMaxima;
 	}
 
-
 	public int getClientesActuales() {
 		return clientesActuales;
 	}
 
-
 	public Collection<Cliente> getClientes() {
-	    return clientes.values();  // retorna todos los clientes
+	    return clientes.values();
 	}
 
 	public Collection<Empleado> getEmpleados() {
-	    return empleados.values();  // retorna todos los empleados
+	    return empleados.values();
 	}
 
 	public ArrayList<Mesa> getMesas()
@@ -81,11 +75,6 @@ public class BoardgameCafe
 	{
 		return juegos;
 	}
-
-	//public ArrayList<CopiaJuego> getCopias()
-	//{
-	//	return copias;
-	//}
 
 	public ArrayList<Prestamo> getHistorialPrestamos()
 	{
@@ -116,25 +105,24 @@ public class BoardgameCafe
 	{
 		return sugerenciasPlatillos;
 	}
-	public ArrayList<Turno> getTurnos() { 
-		return turnos; }
-	
 
-	// SETTERS
+	public ArrayList<Turno> getTurnos() { 
+		return turnos; 
+	}
+	
+	// devuelve los torneos
+	public ArrayList<Torneo> getTorneos() {
+		return torneos;
+	}
 
 	public void setAdministrador(Administrador administrador)
 	{
 		this.administrador = administrador;
 	}
 
-
-	// AGREGAR
-
-
 	public void agregarCliente(Cliente c) {
 	    clientes.put(c.getLogin(), c);
 	}
-
 
 	public void agregarEmpleado(Empleado e) {
 	    empleados.put(e.getLogin(), e);
@@ -149,11 +137,6 @@ public class BoardgameCafe
 	{
 		juegos.add(j);
 	}
-
-	//public void agregarCopia(CopiaJuego c)
-	//{
-		//copias.add(c);
-	//}
 
 	public void agregarPrestamoDirecto(Prestamo p)
 	{
@@ -186,11 +169,8 @@ public class BoardgameCafe
 	}
 
 
-	// BUSCAR
-
-
 	public Cliente buscarCliente(String login) {
-	    return clientes.get(login);  // retorna null si no existe
+	    return clientes.get(login);
 	}
 
 	public Empleado buscarEmpleado(String login) {
@@ -233,19 +213,36 @@ public class BoardgameCafe
 		return null;
 	}
 	
+	// agrega un torneo
+	public void agregarTorneo(Torneo torneo)
+	{
+		torneos.add(torneo);
+	}
+	
+	// busca un torneo por codigo
+	public Torneo buscarTorneo(String codigo)
+	{
+		Torneo encontrado = null;
+
+		for (Torneo t : torneos)
+		{
+			if (t.getCodigo().equals(codigo))
+			{
+				encontrado = t;
+			}
+		}
+
+		return encontrado;
+	}
+	
 	public ArrayList<Prestamo> getPrestamosActivos() {
-	    ArrayList<Prestamo> activos = new ArrayList<>();
+	    ArrayList<Prestamo> activos = new ArrayList<Prestamo>();
 	    for (Prestamo p : historialPrestamos) {
 	        if (p.isActivo()) activos.add(p);
 	    }
 	    return activos;
 	}
 
-	// LOGICA DE NEGOCIO
-	
-	
-	// Prestar juegos
-	
 	public Prestamo crearPrestamo(PuedePrestar solicitante, JuegoDeMesa juego) {
 
 	    if (!solicitante.puedePedirPrestamo())
@@ -298,24 +295,21 @@ public class BoardgameCafe
 	    prestamo.cerrar();
 	}
 
-	// Juegos disponibles para prestar
 	public List<JuegoDeMesa> getJuegosDisponiblesPrestamo() {
-	    List<JuegoDeMesa> disponibles = new ArrayList<>();
+	    List<JuegoDeMesa> disponibles = new ArrayList<JuegoDeMesa>();
 	    for (JuegoDeMesa j : juegos) {
 	        if (j.estaDisponiblePrestamo()) disponibles.add(j);
 	    }
 	    return disponibles;
 	}
 
-	// Juegos disponibles para vender
 	public List<JuegoDeMesa> getJuegosDisponiblesVenta() {
-	    List<JuegoDeMesa> disponibles = new ArrayList<>();
+	    List<JuegoDeMesa> disponibles = new ArrayList<JuegoDeMesa>();
 	    for (JuegoDeMesa j : juegos) {
 	        if (j.estaDisponibleVenta()) disponibles.add(j);
 	    }
 	    return disponibles;
 	}
-	// Mesas
 	
     public Mesa getMesaDisponible() {
         for (Mesa m : mesas) {
@@ -345,7 +339,6 @@ public class BoardgameCafe
         if (!cliente.estaEnCafe())
             throw new IllegalStateException("Cliente no esta en el cafe");
 
-        // Devolver préstamos activos
         for (Prestamo p : historialPrestamos) {
             if (p.isActivo() && p.getSolicitante().equals(cliente)) {
                 devolverPrestamo(p);
@@ -357,8 +350,6 @@ public class BoardgameCafe
         cliente.liberarMesa();
     }
 
-	
-	// Ventas cafeteria
     public VentaCafe registrarVentaCafe(Cliente cliente, boolean cobraPropina) {
         if (!cliente.estaEnCafe())
             throw new IllegalStateException("Cliente no tiene mesa asignada");
@@ -393,7 +384,7 @@ public class BoardgameCafe
             throw new IllegalStateException("La venta no tiene productos");
 
         venta.cerrar();
-        ventasCafe.add(venta); // Agregar venta al cerrar
+        ventasCafe.add(venta);
         venta.getCliente().agregarPuntos((int)(venta.calcularTotal() * 0.01));
     }
 
@@ -405,12 +396,7 @@ public class BoardgameCafe
         return null;
     }
 
-  
-	
-	//Ventas Juegos
-    
     public void aplicarCodigoDescuento(Cliente cliente, String codigo) {
-        // Buscar el empleado que tiene ese código
         for (Empleado e : empleados.values()) {
             if (e.getCodigoDescuento().equals(codigo)) {
                 cliente.setCodigoDescuento(codigo);
@@ -430,13 +416,24 @@ public class BoardgameCafe
         VentaJuego venta = new VentaJuego(codigo, comprador);
         venta.agregarDetalle(new DetalleVentaJuego(juego, cantidad));
         
-     // Calcular descuento
         if (comprador instanceof Empleado) {
             venta.setDescuento(venta.calcularSubtotal() * 0.20);
         } else if (comprador instanceof Cliente) {
             Cliente c = (Cliente) comprador;
-            if (c.tieneDescuento()) {
-                // 10% de descuento por código de empleado
+
+            // primero intenta usar bono de torneo
+            if (c.tieneBonoTorneo()) {
+
+                double bono = c.usarBonoTorneo();
+
+                if (bono > venta.calcularSubtotal()) {
+                    bono = venta.calcularSubtotal();
+                }
+
+                venta.setDescuento(bono);
+            }
+            // si no tiene bono usa descuento normal
+            else if (c.tieneDescuento()) {
                 venta.setDescuento(venta.calcularSubtotal() * 0.10);
             }
         }
@@ -451,10 +448,93 @@ public class BoardgameCafe
 
         return venta;
     }
-	
-	
-	// Empleados y turnos
-	
+
+    // crea un torneo nuevo
+	public Torneo crearTorneo(String diaSemana, JuegoDeMesa juego, int maxParticipantes,
+	                          TipoTorneo tipo, double tarifaEntrada, double bonoDescuento) {
+
+	    if (juego == null) {
+	        throw new IllegalArgumentException("juego invalido");
+	    }
+
+	    // valida que haya suficientes copias para soportar el torneo
+	    if (maxParticipantes > juego.getTotalCopiasPrestamo() * juego.getMaxJugadores()) {
+	        throw new IllegalStateException("no hay suficientes copias");
+	    }
+
+	    String codigo = "T-" + (torneos.size() + 1);
+
+	    Torneo torneo = new Torneo(codigo, diaSemana, juego, maxParticipantes, tipo, tarifaEntrada, bonoDescuento);
+
+	    torneos.add(torneo);
+
+	    return torneo;
+	}
+
+	// inscribe cliente a torneo
+	public void inscribirClienteTorneo(Cliente cliente, Torneo torneo, int cupos) {
+
+	    if (cliente == null || torneo == null) {
+	        throw new IllegalArgumentException("datos invalidos");
+	    }
+
+	    boolean esFanatico = cliente.esFanaticoDe(torneo.getJuego());
+
+	    torneo.inscribir(cliente, cupos, esFanatico);
+	}
+
+	// inscribe empleado a torneo
+	public void inscribirEmpleadoTorneo(Empleado empleado, Torneo torneo, int cupos) {
+
+	    if (empleado == null || torneo == null) {
+	        throw new IllegalArgumentException("datos invalidos");
+	    }
+
+	    if (empleadoTrabajaEseDia(empleado, torneo.getDiaSemana())) {
+	        throw new IllegalStateException("empleado tiene turno ese dia");
+	    }
+
+	    torneo.inscribir(empleado, cupos, false);
+	}
+
+	// verifica si el empleado trabaja ese dia
+	public boolean empleadoTrabajaEseDia(Empleado empleado, String diaSemana) {
+
+	    boolean trabaja = false;
+
+	    for (Turno t : empleado.getTurnos()) {
+	        if (t.getDiaSemana().equals(diaSemana)) {
+	            trabaja = true;
+	        }
+	    }
+
+	    return trabaja;
+	}
+
+	// desinscribe usuario de torneo
+	public void desinscribirUsuarioTorneo(Usuario usuario, Torneo torneo) {
+
+	    if (usuario == null || torneo == null) {
+	        throw new IllegalArgumentException("datos invalidos");
+	    }
+
+	    torneo.desinscribir(usuario);
+	}
+
+	// entrega bono a ganador de torneo amistoso
+	public void entregarPremioAmistoso(Torneo torneo, Cliente ganador) {
+
+	    if (torneo.getTipo() != TipoTorneo.AMISTOSO) {
+	        throw new IllegalStateException("no es torneo amistoso");
+	    }
+
+	    if (!torneo.estaInscrito(ganador)) {
+	        throw new IllegalStateException("cliente no inscrito");
+	    }
+
+	    ganador.guardarBonoTorneo(torneo.getBonoDescuento());
+	}
+
     public void agregarTurno(Turno turno) {
         turnos.add(turno);
     }
@@ -469,9 +549,7 @@ public class BoardgameCafe
         empleado.quitarTurno(turno);
     }
 
-    // Cambio general — empleado pide un turno nuevo
     public SolicitudCambioTurno solicitarCambioGeneral(Empleado empleado,Turno turnoQueQuiereQuitar,Turno turnoQueDesea,String motivo) {
-		// Verificar que el empleado tenga ese turno
 		if (!empleado.getTurnos().contains(turnoQueQuiereQuitar)) throw new IllegalStateException("El empleado no tiene ese turno");
 		
 		String codigo = "SCT-" + (solicitudesCambioTurno.size() + 1);
@@ -480,12 +558,9 @@ public class BoardgameCafe
 		return solicitud;
 	}
 
-    // Intercambio — empleado quiere el turno de otro
 	public SolicitudCambioTurno solicitarIntercambioTurno(Empleado solicitante,Empleado otroEmpleado,Turno turnoQueOfrece,Turno turnoQueDesea,String motivo) {
-		// Verificar que el solicitante tenga ese turno
 		if (!solicitante.getTurnos().contains(turnoQueOfrece))throw new IllegalStateException("El empleado no tiene ese turno");
 		
-		// Verificar que el otro empleado tenga el turno deseado
 		if (!otroEmpleado.getTurnos().contains(turnoQueDesea))throw new IllegalStateException("El otro empleado no tiene ese turno");
 		
 		String codigo = "SCT-" + (solicitudesCambioTurno.size() + 1);
@@ -498,9 +573,8 @@ public class BoardgameCafe
 	    if (!solicitud.getEstado().equals("Pendiente"))
 	        throw new IllegalStateException("Solicitud ya fue procesada");
 
-	    // Verificar que queden los minimos
 	    if (!solicitud.getTurnoQueOfrece().tienePersonalMinimoSin(solicitud.getEmpleadoSolicitante())) {
-	        throw new IllegalStateException("No se puede aprobar, quedaría poco personal");}
+	        throw new IllegalStateException("No se puede aprobar, quedaria poco personal");}
 
 	    solicitud.aprobar();
 	}
@@ -509,14 +583,13 @@ public class BoardgameCafe
 	    if (!solicitud.getEstado().equals("Pendiente"))
 	        throw new IllegalStateException("Solicitud ya fue procesada");
 
-	    // Verificar que queden minimos en ambos turnos
 	    if (!solicitud.getTurnoQueOfrece().tienePersonalMinimoSin(solicitud.getEmpleadoSolicitante())) {
 	    	solicitud.rechazar();
-	        throw new IllegalStateException("No se puede aprobar, quedaría poco personal en turno ofrecido");}
+	        throw new IllegalStateException("No se puede aprobar, quedaria poco personal en turno ofrecido");}
 
 	    if (!solicitud.getTurnoSolicitado().tienePersonalMinimoSin(solicitud.getEmpleadoIntercambio())) {
 	    	solicitud.rechazar();
-	        throw new IllegalStateException("No se puede aprobar, quedaría poco personal en turno deseado");}
+	        throw new IllegalStateException("No se puede aprobar, quedaria poco personal en turno deseado");}
 
 	    solicitud.aprobar();
 	}
@@ -527,28 +600,20 @@ public class BoardgameCafe
         solicitud.rechazar();
     }
 
- 
-    // Ver solicitudes pendientes
     public ArrayList<SolicitudCambioTurno> getSolicitudesPendientes() {
-        ArrayList<SolicitudCambioTurno> pendientes = new ArrayList<>();
+        ArrayList<SolicitudCambioTurno> pendientes = new ArrayList<SolicitudCambioTurno>();
         for (SolicitudCambioTurno s : solicitudesCambioTurno) {
             if (s.getEstado().equals("Pendiente")) pendientes.add(s);
         }
         return pendientes;
     }
 	
-	
-	
-	// Administrador e informes
-	
-	 public void moverVentaAPrestamo(JuegoDeMesa juego) {
-	     if (juego.getCopiasVenta() == 0)
-	         throw new IllegalStateException("No hay copias en venta");
-	     juego.moverVentaAPrestamo();
-	 }
+	public void moverVentaAPrestamo(JuegoDeMesa juego) {
+	    if (juego.getCopiasVenta() == 0)
+	        throw new IllegalStateException("No hay copias en venta");
+	    juego.moverVentaAPrestamo();
+	}
 
-
-	 // Aprobar o rechazar sugerencia de platillo
 	public void aprobarSugerencia(SugerenciaPlatillo sugerencia, String tipo, double precio) {
 		if (!sugerencia.getEstado().equals("Pendiente"))throw new IllegalStateException("Sugerencia ya fue procesada");
 		
@@ -563,18 +628,13 @@ public class BoardgameCafe
 		sugerencia.rechazar();
 	}
 
-	 // Empleado crea sugerencia platillo
-	 public SugerenciaPlatillo crearSugerencia(Empleado empleado, String nombrePlatillo, String descripcion) {
-	String codigo = "SP-" + (sugerenciasPlatillos.size() + 1);
-	SugerenciaPlatillo s = new SugerenciaPlatillo(codigo, empleado, nombrePlatillo, descripcion);
-	sugerenciasPlatillos.add(s);
-	return s;
-	 }
-	 
-	 
-	 //INFORMES
+	public SugerenciaPlatillo crearSugerencia(Empleado empleado, String nombrePlatillo, String descripcion) {
+		String codigo = "SP-" + (sugerenciasPlatillos.size() + 1);
+		SugerenciaPlatillo s = new SugerenciaPlatillo(codigo, empleado, nombrePlatillo, descripcion);
+		sugerenciasPlatillos.add(s);
+		return s;
+	}
 
-	// Total ventas cafetería
 	public double getTotalVentasCafe() {
 	    double total = 0;
 	    for (VentaCafe v : ventasCafe) {
@@ -583,7 +643,6 @@ public class BoardgameCafe
 	    return total;
 	}
 
-	// Total ventas juegos
 	public double getTotalVentasJuego() {
 	    double total = 0;
 	    for (VentaJuego v : ventasJuego) {
@@ -592,12 +651,10 @@ public class BoardgameCafe
 	    return total;
 	}
 
-	// Total general
 	public double getTotalVentas() {
 	    return getTotalVentasCafe() + getTotalVentasJuego();
 	}
 
-	// Ventas por rubro separadas
 	public String getInformeVentas() {
 	    return "=== INFORME DE VENTAS ===" 
 	        + "\nVentas cafeteria:  $" + getTotalVentasCafe()
@@ -607,23 +664,13 @@ public class BoardgameCafe
 	        + "\nNum ventas juegos: " + ventasJuego.size();
 	}
 
-	// Historial de préstamos de un juego específico
 	public ArrayList<Prestamo> getHistorialPrestamosJuego(JuegoDeMesa juego) {
-	    ArrayList<Prestamo> resultado = new ArrayList<>();
+	    ArrayList<Prestamo> resultado = new ArrayList<Prestamo>();
 	    for (Prestamo p : historialPrestamos) {
 	        if (p.getJuego().equals(juego)) resultado.add(p);
 	    }
 	    return resultado;
 	}
-	// Historial de prestamos completo es getHistorialPrestamos
-	
-	
-	// Usuarios
-	
-	
-
-	// El toString
-
 
 	@Override
 	public String toString()
@@ -643,6 +690,7 @@ public class BoardgameCafe
 		texto += ", empleados=" + empleados.size();
 		texto += ", mesas=" + mesas.size();
 		texto += ", juegos=" + juegos.size();
+		texto += ", torneos=" + torneos.size();
 
 		if (historialPrestamos.size() > 0)
 		{
