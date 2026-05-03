@@ -351,7 +351,8 @@ public class BoardgameCafe
         if (!cliente.estaEnCafe())
             throw new IllegalStateException("Cliente no esta en el cafe");
 
-        // Devolver préstamos activos
+        
+        ArrayList<Prestamo> aDevolver = new ArrayList<>();
         for (Prestamo p : historialPrestamos) {
             if (p.isActivo() && p.getSolicitante().equals(cliente)) {
                 aDevolver.add(p);
@@ -366,7 +367,6 @@ public class BoardgameCafe
         cliente.getMesaActual().liberar();
         cliente.liberarMesa();
     }
-
 	
 	// Ventas cafeteria
     public VentaCafe registrarVentaCafe(Cliente cliente, boolean cobraPropina) {
