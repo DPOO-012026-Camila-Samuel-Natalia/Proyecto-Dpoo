@@ -47,12 +47,12 @@ public class Principal
 		// =========================
 		Cliente c1 = new Cliente("1", "Samuel", "samuel123", "1234");
 		Cliente c2 = new Cliente("2", "Laura", "laura456", "abcd");
-		Cliente c3 = new Cliente("2", "Sofia", "sof1", "hola");
+		Cliente c3 = new Cliente("3", "Sofia", "sof1", "hola");
 
 		cafe.agregarCliente(c1);
 		cafe.agregarCliente(c2);
 		cafe.agregarCliente(c3);
-
+		
 		// =========================
 		// EMPLEADOS
 		// =========================
@@ -71,6 +71,7 @@ public class Principal
 		cafe.agregarEmpleado(m4);
 		cafe.agregarEmpleado(m5);
 		cafe.agregarEmpleado(m6);
+		cafe.agregarEmpleado(co2);
 		m1.agregarJuegoQueExplica("Catan");
 		
 		

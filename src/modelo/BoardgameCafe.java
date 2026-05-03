@@ -257,13 +257,13 @@ public class BoardgameCafe
 	        if (juego.soloAdultos() && mesa.hayMenoresDeEdad())
 	            throw new IllegalStateException("Juego no apto para menores");
 	        
-	        if (juego.getEdadMinima() > 0 && mesa.hayMenoresDeEdad())
+	        if (juego.getEdadMinima() > 0 && mesa.isNinos() && !juego.soloAdultos())
 	            throw new IllegalStateException("Juego no apto por edad minima");
 
 	        if (mesa.getNumPersonas() < juego.getMinJugadores())
 	            throw new IllegalStateException("Pocas personas para este juego");
 	        
-	        if (mesa.getNumPersonas() > juego.getMaxJugadores())
+	        if (mesa.getNumPersonas() > juego.getMaxJugadores())	
 	            throw new IllegalStateException("Demasiadas personas para este juego");
 	    }
 	    
@@ -302,6 +302,16 @@ public class BoardgameCafe
 	    }
 	    return disponibles;
 	}
+	
+	// Buscar cliente en una mesa para que el mesero pueda gestionar el prestamo pero unirlo a un cliente
+	public Cliente buscarClientePorMesa(int numeroMesa) {
+	    for (Cliente c : clientes.values()) {
+	        if (c.estaEnCafe() && c.getMesaActual().getNumero() == numeroMesa) {
+	            return c;
+	        }
+	    }
+	    return null;
+	}
 
 	public List<JuegoDeMesa> getJuegosDisponiblesVenta() {
 	    List<JuegoDeMesa> disponibles = new ArrayList<JuegoDeMesa>();
@@ -335,14 +345,21 @@ public class BoardgameCafe
         clientesActuales += numPersonas;
     }
 
+   
+
     public void retirarCliente(Cliente cliente) {
         if (!cliente.estaEnCafe())
             throw new IllegalStateException("Cliente no esta en el cafe");
 
+        // Devolver préstamos activos
         for (Prestamo p : historialPrestamos) {
             if (p.isActivo() && p.getSolicitante().equals(cliente)) {
-                devolverPrestamo(p);
+                aDevolver.add(p);
             }
+        }
+        
+        for (Prestamo p : aDevolver) {
+            devolverPrestamo(p);
         }
 
         clientesActuales -= cliente.getMesaActual().getNumPersonas();
@@ -350,6 +367,8 @@ public class BoardgameCafe
         cliente.liberarMesa();
     }
 
+	
+	// Ventas cafeteria
     public VentaCafe registrarVentaCafe(Cliente cliente, boolean cobraPropina) {
         if (!cliente.estaEnCafe())
             throw new IllegalStateException("Cliente no tiene mesa asignada");
