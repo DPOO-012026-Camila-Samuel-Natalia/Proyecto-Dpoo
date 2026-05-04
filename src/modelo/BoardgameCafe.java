@@ -193,7 +193,7 @@ public class BoardgameCafe
 	{
 		for (int i = 0; i < juegos.size(); i++)
 		{
-			if (juegos.get(i).getNombre().equals(nombre))
+			if (juegos.get(i).getNombre().equalsIgnoreCase(nombre))
 			{
 				return juegos.get(i);
 			}
@@ -472,22 +472,7 @@ public class BoardgameCafe
 	public Torneo crearTorneo(String diaSemana, JuegoDeMesa juego, int maxParticipantes,
 	                          TipoTorneo tipo, double tarifaEntrada, double bonoDescuento) {
 
-	    if (juego == null) {
-	        throw new IllegalArgumentException("juego invalido");
-	    }
-
-	    // valida que haya suficientes copias para soportar el torneo
-	    if (maxParticipantes > juego.getTotalCopiasPrestamo() * juego.getMaxJugadores()) {
-	        throw new IllegalStateException("no hay suficientes copias");
-	    }
-
-	    String codigo = "T-" + (torneos.size() + 1);
-
-	    Torneo torneo = new Torneo(codigo, diaSemana, juego, maxParticipantes, tipo, tarifaEntrada, bonoDescuento);
-
-	    torneos.add(torneo);
-
-	    return torneo;
+		return administrador.crearTorneo(this, diaSemana, juego, maxParticipantes, tipo, tarifaEntrada, bonoDescuento);
 	}
 
 	// inscribe cliente a torneo
@@ -504,16 +489,8 @@ public class BoardgameCafe
 
 	// inscribe empleado a torneo
 	public void inscribirEmpleadoTorneo(Empleado empleado, Torneo torneo, int cupos) {
-
-	    if (empleado == null || torneo == null) {
-	        throw new IllegalArgumentException("datos invalidos");
-	    }
-
-	    if (empleadoTrabajaEseDia(empleado, torneo.getDiaSemana())) {
-	        throw new IllegalStateException("empleado tiene turno ese dia");
-	    }
-
-	    torneo.inscribir(empleado, cupos, false);
+		administrador.inscribirEmpleadoATorneo(this, empleado, torneo, cupos);
+	
 	}
 
 	// verifica si el empleado trabaja ese dia
@@ -589,34 +566,15 @@ public class BoardgameCafe
     }
 
 	public void aprobarCambioGeneral(SolicitudCambioTurno solicitud) {
-	    if (!solicitud.getEstado().equals("Pendiente"))
-	        throw new IllegalStateException("Solicitud ya fue procesada");
-
-	    if (!solicitud.getTurnoQueOfrece().tienePersonalMinimoSin(solicitud.getEmpleadoSolicitante())) {
-	        throw new IllegalStateException("No se puede aprobar, quedaria poco personal");}
-
-	    solicitud.aprobar();
+		administrador.aprobarCambioGeneral(solicitud);
 	}
 
 	public void aprobarIntercambioTurno(SolicitudCambioTurno solicitud) {
-	    if (!solicitud.getEstado().equals("Pendiente"))
-	        throw new IllegalStateException("Solicitud ya fue procesada");
-
-	    if (!solicitud.getTurnoQueOfrece().tienePersonalMinimoSin(solicitud.getEmpleadoSolicitante())) {
-	    	solicitud.rechazar();
-	        throw new IllegalStateException("No se puede aprobar, quedaria poco personal en turno ofrecido");}
-
-	    if (!solicitud.getTurnoSolicitado().tienePersonalMinimoSin(solicitud.getEmpleadoIntercambio())) {
-	    	solicitud.rechazar();
-	        throw new IllegalStateException("No se puede aprobar, quedaria poco personal en turno deseado");}
-
-	    solicitud.aprobar();
+		administrador.aprobarIntercambioTurno(solicitud);
 	}
 
     public void rechazarCambioTurno(SolicitudCambioTurno solicitud) {
-        if (!solicitud.getEstado().equals("Pendiente"))
-            throw new IllegalStateException("Solicitud ya fue procesada");
-        solicitud.rechazar();
+    	administrador.rechazarCambioTurno(solicitud);
     }
 
     public ArrayList<SolicitudCambioTurno> getSolicitudesPendientes() {
@@ -628,23 +586,15 @@ public class BoardgameCafe
     }
 	
 	public void moverVentaAPrestamo(JuegoDeMesa juego) {
-	    if (juego.getCopiasVenta() == 0)
-	        throw new IllegalStateException("No hay copias en venta");
-	    juego.moverVentaAPrestamo();
+		administrador.moverVentaAPrestamo(juego);
 	}
 
 	public void aprobarSugerencia(SugerenciaPlatillo sugerencia, String tipo, double precio) {
-		if (!sugerencia.getEstado().equals("Pendiente"))throw new IllegalStateException("Sugerencia ya fue procesada");
-		
-		ProductoMenu nuevo = sugerencia.crearProducto(tipo, precio);
-		productosMenu.add(nuevo);
-		sugerencia.aprobar();
+		administrador.aprobarSugerencia(sugerencia, tipo, precio, productosMenu);
 	}
 	
 	public void rechazarSugerencia(SugerenciaPlatillo sugerencia) {
-		if (!sugerencia.getEstado().equals("Pendiente"))
-		throw new IllegalStateException("Sugerencia ya fue procesada");
-		sugerencia.rechazar();
+		administrador.rechazarSugerencia(sugerencia);
 	}
 
 	public SugerenciaPlatillo crearSugerencia(Empleado empleado, String nombrePlatillo, String descripcion) {

@@ -131,6 +131,30 @@ public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
                             + ";" + i.getCuposTomados());
                 }
             }
+            
+            for (VentaCafe v : cafe.getVentasCafe()) {
+                out.println("VENTA_CAFE;" + v.getCodigo()
+                    + ";" + v.getComprador().getLogin()
+                    + ";" + v.isCobraPropina()
+                    + ";" + v.getDescuento());
+                for (DetalleVentaCafe d : v.getDetalles()) {
+                    out.println("DETALLE_CAFE;" + v.getCodigo()
+                        + ";" + d.getProducto().getNombre()
+                        + ";" + d.getCantidad());
+                }
+            }
+            
+            for (VentaJuego v : cafe.getVentasJuego()) {
+                out.println("VENTA_JUEGO;" + v.getCodigo()
+                    + ";" + v.getComprador().getLogin()
+                    + ";" + v.getDescuento());
+                for (DetalleVentaJuego d : v.getDetalles()) {
+                    out.println("DETALLE_JUEGO;" + v.getCodigo()
+                        + ";" + d.getJuego().getNombre()
+                        + ";" + d.getCantidad());
+                }
+            }
+            
 
             out.close();
         }
@@ -256,6 +280,26 @@ public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
                 {
                     cafe.agregarTurno(new Turno(p[1]));
                 }
+                
+                else if (p[0].equals("VENTA_CAFE")) {
+                    Cliente c = cafe.buscarCliente(p[2]);
+                    if (c != null) {
+                        VentaCafe v = new VentaCafe(p[1], c, Boolean.parseBoolean(p[3]));
+                        v.setDescuento(Double.parseDouble(p[4]));
+                        v.cerrar();
+                        cafe.agregarVentaCafe(v);
+                    }
+                }
+                else if (p[0].equals("VENTA_JUEGO")) {
+                    Usuario comprador = cafe.buscarCliente(p[2]);
+                    if (comprador == null) comprador = cafe.buscarEmpleado(p[2]);
+                    if (comprador != null) {
+                        VentaJuego v = new VentaJuego(p[1], comprador);
+                        v.setDescuento(Double.parseDouble(p[3]));
+                        v.cerrar();
+                        cafe.agregarVentaJuego(v);
+                    }
+                }
             }
 
             for (String l : lineas)
@@ -301,6 +345,30 @@ public class PersistenciaBoardGameCafeJSON implements IPersistenciaBoardGameCafe
                             tipo, Double.parseDouble(p[6]), Double.parseDouble(p[7]));
 
                     cafe.agregarTorneo(torneo);
+                }
+                else if (p[0].equals("DETALLE_CAFE")) {
+                    VentaCafe ventaTarget = null;
+                    for (VentaCafe v : cafe.getVentasCafe()) {
+                        if (v.getCodigo().equals(p[1])) {
+                            ventaTarget = v;
+                        }
+                    }
+                    ProductoMenu prod = cafe.buscarProductoMenu(p[2]);
+                    if (ventaTarget != null && prod != null) {
+                        ventaTarget.agregarDetalle(new DetalleVentaCafe(prod, Integer.parseInt(p[3])));
+                    }
+                }
+                else if (p[0].equals("DETALLE_JUEGO")) {
+                    VentaJuego ventaTarget = null;
+                    for (VentaJuego v : cafe.getVentasJuego()) {
+                        if (v.getCodigo().equals(p[1])) {
+                            ventaTarget = v;
+                        }
+                    }
+                    JuegoDeMesa juego = cafe.buscarJuego(p[2]);
+                    if (ventaTarget != null && juego != null) {
+                        ventaTarget.agregarDetalle(new DetalleVentaJuego(juego, Integer.parseInt(p[3])));
+                    }
                 }
             }
 
