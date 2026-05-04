@@ -81,7 +81,7 @@ public class JuegoDeMesa {
 	}
 	
 	public boolean soloAdultos() {
-		if (this.edadMinima == 18) {return true;}
+		if (this.edadMinima >= 18) {return true;}
 		return false;
 		
 	}
