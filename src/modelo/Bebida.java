@@ -43,10 +43,10 @@ public class Bebida extends ProductoMenu
 	}
 
 	@Override
-	public String toString()
-	{
-		return "Bebida [nombre=" + getNombre() + ", precio=" + getPrecio()
-				+ ", alcoholica=" + alcoholica + ", caliente=" + caliente + "]";
+	public String toString() {
+	    String tipo = caliente ? "Caliente" : "Fría";
+	    String alcohol = alcoholica ? " | Alcohólica" : "";
+	    return getNombre() + " - $" + getPrecio() + " (" + tipo + alcohol + ")";
 	}
 
 

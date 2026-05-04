@@ -17,7 +17,7 @@ public class ConsolaEmpleado {
 	    private CentralPersistencia central;
 	 
 	    public ConsolaEmpleado() {
-	        central = new CentralPersistencia(new PersistenciaBoardGameCafeJSON("datos/boardgamecafe.txt"));
+	        central = new CentralPersistencia(new PersistenciaBoardGameCafeJSON("src/datos/boardgamecafe.txt"));
 	        this.cafe = central.cargar();
 	        if (this.cafe == null) {
 	            System.out.println("No se encontró archivo. Iniciando sistema vacío.");

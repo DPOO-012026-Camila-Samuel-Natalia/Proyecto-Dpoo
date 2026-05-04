@@ -20,8 +20,10 @@ public class Pasteleria extends ProductoMenu {
 
     @Override
     public String toString() {
-        return "Pasteleria [nombre=" + getNombre() 
-            + ", precio=" + getPrecio()
-            + ", alergenos=" + alergenos + "]";
+        if (alergenos.isEmpty()) {
+            return getNombre() + " - $" + getPrecio();
+        } else {
+            return getNombre() + " - $" + getPrecio() + " | Alérgenos: " + alergenos;
+        }
     }
 }
