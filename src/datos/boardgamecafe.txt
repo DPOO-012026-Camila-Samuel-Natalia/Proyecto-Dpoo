@@ -2,6 +2,7 @@ CAPACIDAD;20
 ADMIN;A1;Andres;admin;admin123
 CLIENTE;3;Sofia;sof1;hola;595;null;null;0.0
 CLIENTE;2;Laura;laura456;abcd;1181;null;DESC-10;0.0
+CLIENTE;C4;Camila;camilacg;1234;0;null;null;0.0
 CLIENTE;1;Samuel;samuel123;1234;902;null;null;0.0
 EMPLEADO;MESERO;14;Andrea;Andreag;triangulo;false
 EMPLEADO;MESERO;12;Ana;anam;2222;true
@@ -20,6 +21,7 @@ JUEGO;Twister;2;4;5;ACCION;false;6;5;40000.0;0
 JUEGO;Monopoly;2;8;8;TABLERO;false;3;0;60000.0;0
 FAVORITO;sof1;Catan
 FAVORITO;sof1;Monopoly
+FAVORITO;camilacg;Catan
 FAVORITO;samuel123;Catan
 BEBIDA;Cafe Americano;7000.0;false;true
 BEBIDA;Cerveza;9000.0;true;false

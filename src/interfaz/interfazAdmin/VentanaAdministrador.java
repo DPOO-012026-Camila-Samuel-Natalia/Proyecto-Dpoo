@@ -21,7 +21,7 @@ import persistencia.PersistenciaBoardGameCafeJSON;
  * Los paneles llaman metodos de esta ventana
  */
 public class VentanaAdministrador extends JFrame{
-    
+	private static final long serialVersionUID = 1L;
     private BoardgameCafe cafe;
     private CentralPersistencia central;
     private Administrador admin;
