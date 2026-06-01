@@ -1,6 +1,7 @@
 // =========================
 // PanelTurnosEmpleado.java
 // =========================
+
 package interfaz.interfazEmpleado;
 
 import java.awt.BorderLayout;
@@ -19,40 +20,49 @@ import javax.swing.table.DefaultTableModel;
 
 import modelo.Turno;
 
-public class PanelTurnosEmpleado extends JPanel implements ActionListener {
+public class PanelTurnosEmpleado extends JPanel
+implements ActionListener {
 
     private static final long serialVersionUID = 1L;
 
     private static final String CAMBIO = "cambio";
 
     private VentanaEmpleado ventana;
+
     private DefaultTableModel modelo;
 
     public PanelTurnosEmpleado(VentanaEmpleado ventana) {
+
         this.ventana = ventana;
 
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
         modelo = new DefaultTableModel(
-                new String[] {
-                        "Día",
-                        "Estado"
-                },
+                new String[]{"Día"},
                 0
         );
 
         JTable tabla = new JTable(modelo);
+
         tabla.setRowHeight(24);
-        tabla.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+
+        tabla.getTableHeader()
+                .setFont(new Font("Arial", Font.BOLD, 12));
 
         add(new JScrollPane(tabla), BorderLayout.CENTER);
 
-        JButton btnCambio = new JButton("Solicitar cambio");
+        JButton btnCambio =
+                new JButton("Solicitar cambio");
+
         btnCambio.setActionCommand(CAMBIO);
+
         btnCambio.addActionListener(this);
 
-        JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel panelBtn =
+                new JPanel(new FlowLayout(FlowLayout.LEFT));
+
         panelBtn.add(btnCambio);
 
         add(panelBtn, BorderLayout.SOUTH);
@@ -61,71 +71,64 @@ public class PanelTurnosEmpleado extends JPanel implements ActionListener {
     }
 
     public void refrescar() {
+
         modelo.setRowCount(0);
 
         for (Turno t : ventana.getTurnosEmpleado()) {
-            String estado;
 
-            if (ventana.estaEnTurno()) {
-                estado = "Activo";
-            } else {
-                estado = "Fuera de turno";
-            }
-
-            modelo.addRow(new Object[] {
-                    t.getDiaSemana(),
-                    estado
+            modelo.addRow(new Object[]{
+                    t.getDiaSemana()
             });
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals(CAMBIO)) {
-            solicitarCambio();
-        }
-    }
 
-    private void solicitarCambio() {
-        String diaOfrece = (String) JOptionPane.showInputDialog(
-                ventana,
-                "Turno que ofreces:",
-                "Cambio turno",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                ventana.getDiasTurnosEmpleado(),
-                null
-        );
+        String diaOfrece =
+                (String) JOptionPane.showInputDialog(
+                        ventana,
+                        "Turno que ofreces:",
+                        "Cambio turno",
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        ventana.getDiasTurnosEmpleado(),
+                        null
+                );
 
         if (diaOfrece == null) return;
 
-        String diaDesea = (String) JOptionPane.showInputDialog(
-                ventana,
-                "Turno que deseas:",
-                "Cambio turno",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                ventana.getDiasTurnos(),
-                null
-        );
+        String diaDesea =
+                (String) JOptionPane.showInputDialog(
+                        ventana,
+                        "Turno que deseas:",
+                        "Cambio turno",
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        ventana.getDiasTurnos(),
+                        null
+                );
 
         if (diaDesea == null) return;
 
-        String motivo = JOptionPane.showInputDialog(
-                ventana,
-                "Motivo:"
-        );
+        String motivo =
+                JOptionPane.showInputDialog(
+                        ventana,
+                        "Motivo:"
+                );
 
         if (motivo == null) return;
 
-        String resultado = ventana.solicitarCambioGeneral(
-                diaOfrece,
-                diaDesea,
-                motivo
+        String resultado =
+                ventana.solicitarCambioGeneral(
+                        diaOfrece,
+                        diaDesea,
+                        motivo
+                );
+
+        JOptionPane.showMessageDialog(
+                ventana,
+                resultado
         );
-
-        JOptionPane.showMessageDialog(ventana, resultado);
-
-        refrescar();
     }
 }
