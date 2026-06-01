@@ -18,7 +18,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
  
 import interfaz.interfazAdmin.VentanaAdministrador;
-import interfaz.interfazCliente.VentanaCliente; 
+import interfaz.interfazCliente.VentanaCliente;
+import interfaz.interfazEmpleado.VentanaEmpleado;
 
 public class VentanaPrincipal extends JFrame implements ActionListener{
     
@@ -105,7 +106,7 @@ public class VentanaPrincipal extends JFrame implements ActionListener{
         }
         else if (comando.equals(EMPLEADO))
         {
-            //new VentanaEmpleado(); 
+        	new VentanaEmpleado(); 
         }
         else if (comando.equals(CLIENTE))
         {
