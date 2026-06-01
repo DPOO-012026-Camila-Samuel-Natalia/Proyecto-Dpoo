@@ -79,7 +79,7 @@ public class VentanaPrincipal extends JFrame implements ActionListener{
     {
         JButton btn = new JButton(texto);
         btn.setBackground(color);
-        btn.setForeground(Color.WHITE);
+        btn.setForeground(Color.BLACK);
         btn.setFocusPainted(false);
         btn.setFont(new Font("Arial", Font.BOLD, 14));
         btn.setActionCommand(comando);

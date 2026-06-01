@@ -1,15 +1,17 @@
 package modelo;
-import java.util.List;
+import java.util.Date;
 
 public class Prestamo {
 	private Usuario solicitante;
     private JuegoDeMesa juego;
     private boolean activo;
+    private Date fecha;
 
     public Prestamo(Usuario solicitante, JuegoDeMesa juego) {
         this.solicitante = solicitante;
         this.juego = juego;
         this.activo = true;
+        this.fecha = new Date();
     }
 
     public void cerrar() {
@@ -27,12 +29,18 @@ public class Prestamo {
 	public boolean isActivo() {
 		return activo;
 	}
+	
+	public Date getFecha()
+	{
+		return fecha;
+	}
     
 	@Override
 	public String toString() {
 	    return "Prestamo [solicitante=" + solicitante.getNombre()
 	        + ", juego=" + juego.getNombre()
-	        + ", activo=" + activo + "]";
+	        + ", activo=" + activo + "]"
+	    	+ ", fecha=" + fecha + "]";
 	}
     
 }
