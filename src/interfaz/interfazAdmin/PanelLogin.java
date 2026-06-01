@@ -72,7 +72,7 @@ public class PanelLogin extends JPanel implements ActionListener {
         filaBoton.setBackground(new Color(30, 30, 45));
         JButton botonIngresar = new JButton("  Ingresar  ");
         botonIngresar.setBackground(new Color(70, 130, 180));
-        botonIngresar.setForeground(Color.WHITE);
+        botonIngresar.setForeground(Color.BLACK);
         botonIngresar.setFocusPainted(false);
         botonIngresar.setFont(new Font("Arial", Font.BOLD, 14));
         botonIngresar.setActionCommand(INGRESAR);

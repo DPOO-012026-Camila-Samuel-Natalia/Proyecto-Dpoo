@@ -36,6 +36,7 @@ public class VentanaAdministrador extends JFrame{
     private PanelTorneos     panelTorneos;
     private PanelVentas      panelVentas;
     private JTabbedPane      tabbedPane;
+    private PanelGraficas    panelGraficas;
  
     
     // CONSTRUCTOR
@@ -84,6 +85,7 @@ public class VentanaAdministrador extends JFrame{
         panelInventario  = new PanelInventario(this);
         panelTorneos     = new PanelTorneos(this);
         panelVentas      = new PanelVentas(this);
+        panelGraficas    = new PanelGraficas(this);
  
         tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Empleados",   panelEmpleados);
@@ -93,6 +95,7 @@ public class VentanaAdministrador extends JFrame{
         tabbedPane.addTab("Inventario",  panelInventario);
         tabbedPane.addTab("Torneos",     panelTorneos);
         tabbedPane.addTab("Ventas",      panelVentas);
+        tabbedPane.addTab("Graficas", panelGraficas);
  
         tabbedPane.addChangeListener(e -> refrescarPestañaActual()); //Forma compacta de agregar un Listener para cambiar la pantalla
  
@@ -114,6 +117,8 @@ public class VentanaAdministrador extends JFrame{
         else if (idx == 4) panelInventario.refrescar();
         else if (idx == 5) panelTorneos.refrescar();
         else if (idx == 6) panelVentas.refrescar();
+        else if (idx == 7) panelGraficas.refrescar();
+     
     }
  
     //AUTENTICAR
@@ -388,6 +393,19 @@ public class VentanaAdministrador extends JFrame{
         return codigos;
     }
  
-   
+    public ArrayList<VentaCafe> getVentasCafe()
+    {
+    	return cafe.getVentasCafe();
+    }
+    
+    public ArrayList<VentaJuego> getVentasJuego()
+    {
+    	return cafe.getVentasJuego();
+    }
+    public ArrayList<Prestamo> getHistorialPrestamos()
+    {
+    	return cafe.getHistorialPrestamos();
+    }
     
 }
+

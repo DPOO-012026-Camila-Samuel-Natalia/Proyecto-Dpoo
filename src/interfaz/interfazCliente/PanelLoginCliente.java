@@ -76,7 +76,7 @@ public class PanelLoginCliente extends JPanel implements ActionListener {
         JButton btnRegistrarse = new JButton("  Registrarse  ");
  
         btnIngresar.setBackground(new Color(70, 130, 180));
-        btnIngresar.setForeground(Color.WHITE);
+        btnIngresar.setForeground(Color.BLACK);
         btnIngresar.setFocusPainted(false);
         btnIngresar.setFont(new Font("Arial", Font.BOLD, 13));
         btnIngresar.setActionCommand(INGRESAR);
@@ -85,7 +85,7 @@ public class PanelLoginCliente extends JPanel implements ActionListener {
         txtPassword.addActionListener(this);
  
         btnRegistrarse.setBackground(new Color(70, 150, 70));
-        btnRegistrarse.setForeground(Color.WHITE);
+        btnRegistrarse.setForeground(Color.BLACK);
         btnRegistrarse.setFocusPainted(false);
         btnRegistrarse.setFont(new Font("Arial", Font.BOLD, 13));
         btnRegistrarse.setActionCommand(REGISTRARSE);
